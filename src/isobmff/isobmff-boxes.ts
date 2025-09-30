@@ -1606,6 +1606,8 @@ const audioCodecToBoxName = (codec: AudioCodec, isQuickTime: boolean): string =>
 		case 'alaw': return 'alaw';
 		case 'pcm-u8': return 'raw ';
 		case 'pcm-s8': return 'sowt';
+		case 'ac3': return 'ac-3';
+		case 'eac3': return 'ec-3';
 	}
 
 	// Logic diverges here

@@ -6,6 +6,7 @@ set -e
 # Clear the stuff from last build
 rm -rf dist
 rm -rf packages/mp3-encoder/dist
+rm -rf packages/eac3/dist
 
 # Ensure license headers on all source files
 tsx scripts/ensure-license-headers.ts
@@ -13,6 +14,10 @@ tsx scripts/ensure-license-headers.ts
 # Type check & generate .js and .d.ts files
 tsc -p src
 tsc -p packages/mp3-encoder/src
+tsc -p packages/eac3/src
+
+# Copy WASM files to dist (TypeScript doesn't copy non-TS/JS files)
+cp packages/eac3/build/*.wasm packages/eac3/dist/modules/build/ 2>/dev/null || true
 
 # So that the resulting files use valid ESM imports with file extension. This only runs for the core Mediabunny as only
 # it ships the individual files to npm (for tree shaking, because it's large)
@@ -21,13 +26,18 @@ npm run fix-build-import-paths
 # Creates bundles for all packages
 tsx scripts/bundle.ts
 
+# Copy WASM files to bundle directories for ESM usage
+cp packages/eac3/build/*.wasm packages/eac3/dist/bundles/ 2>/dev/null || true
+
 # Declaration file rollup and checks
 api-extractor run
 api-extractor run -c packages/mp3-encoder/api-extractor.json
+api-extractor run -c packages/eac3/api-extractor.json
 
 # Checks that all symbols are documented
 tsx scripts/check-docblocks.ts dist/mediabunny.d.ts
 tsx scripts/check-docblocks.ts packages/mp3-encoder/dist/mediabunny-mp3-encoder.d.ts
+tsx scripts/check-docblocks.ts packages/eac3/dist/mediabunny-eac3.d.ts
 
 # Checks that API docs are generatable
 npm run docs:generate -- --dry
@@ -35,3 +45,4 @@ npm run docs:generate -- --dry
 # Appends stuff to the declaration files to register the global variables these libraries expose
 echo 'export as namespace Mediabunny;' >> dist/mediabunny.d.ts
 echo 'export as namespace MediabunnyMp3Encoder;' >> packages/mp3-encoder/dist/mediabunny-mp3-encoder.d.ts
+echo 'export as namespace MediabunnyEac3;' >> packages/eac3/dist/mediabunny-eac3.d.ts
