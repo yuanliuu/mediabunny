@@ -907,6 +907,18 @@ const pcmC = (trackData: IsobmffAudioTrackData) => {
 	]);
 };
 
+/** AC3SpecificBox */
+const dac3 = (trackData: IsobmffAudioTrackData) => {
+	const bytes = toUint8Array(trackData.info.decoderConfig.description!);
+	return box('dac3', [...bytes.subarray(0, 3)]);
+};
+
+/** EC3SpecificBox */
+const dec3 = (trackData: IsobmffAudioTrackData) => {
+	const bytes = toUint8Array(trackData.info.decoderConfig.description!);
+	return box('dec3', [...bytes]);
+};
+
 export const subtitleSampleDescription = (
 	compressionType: string,
 	trackData: IsobmffSubtitleTrackData,
@@ -1647,6 +1659,8 @@ const audioCodecToConfigurationBox = (codec: AudioCodec, isQuickTime: boolean) =
 		case 'opus': return dOps;
 		case 'vorbis': return esds;
 		case 'flac': return dfLa;
+		case 'ac3': return dac3;
+		case 'eac3': return dec3;
 	}
 
 	// Logic diverges here
