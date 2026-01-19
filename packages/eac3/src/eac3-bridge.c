@@ -9,9 +9,9 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../lib/avcodec.h"
-#include "../lib/channel_layout.h"
-#include "../lib/frame.h"
+#include "libavcodec/avcodec.h"
+#include "libavutil/channel_layout.h"
+#include "libavutil/frame.h"
 
 typedef struct {
 	AVCodecContext *ctx;

@@ -111,15 +111,16 @@ else
 fi
 
 echo "Copying header files..."
-mkdir -p "$ORIGINAL_DIR/lib"
+mkdir -p "$ORIGINAL_DIR/lib/libavcodec"
+mkdir -p "$ORIGINAL_DIR/lib/libavutil"
 
-# Copy all libavcodec headers
+# Copy all libavcodec headers with directory structure
 echo "Copying libavcodec headers..."
-cp "$INSTALL_DIR/include/libavcodec/"*.h "$ORIGINAL_DIR/lib/" 2>/dev/null || true
+cp "$INSTALL_DIR/include/libavcodec/"*.h "$ORIGINAL_DIR/lib/libavcodec/" 2>/dev/null || true
 
-# Copy all libavutil headers
+# Copy all libavutil headers with directory structure
 echo "Copying libavutil headers..."
-cp "$INSTALL_DIR/include/libavutil/"*.h "$ORIGINAL_DIR/lib/" 2>/dev/null || true
+cp "$INSTALL_DIR/include/libavutil/"*.h "$ORIGINAL_DIR/lib/libavutil/" 2>/dev/null || true
 
 echo ""
 echo "Contents of lib directory:"
