@@ -8,8 +8,10 @@
 
 import { CustomAudioDecoder, CustomAudioEncoder, AudioCodec, EncodedPacket, AudioSample, registerDecoder, registerEncoder } from 'mediabunny';
 import type { DecoderCommand, EncoderCommand, DecoderResponseData, EncoderResponseData, WorkerResponse } from './shared';
-import decodeWorkerUrl from './decode.worker?url';
-import encodeWorkerUrl from './encode.worker?url';
+// @ts-expect-error An esbuild plugin handles this, TypeScript doesn't need to understand
+import createDecodeWorker from './decode.worker';
+// @ts-expect-error An esbuild plugin handles this, TypeScript doesn't need to understand
+import createEncodeWorker from './encode.worker';
 
 const createWorker = (url: string): Worker => {
 	return new Worker(url, { type: 'module' });
@@ -31,7 +33,8 @@ class Eac3Decoder extends CustomAudioDecoder {
 	}
 
 	async init() {
-		this.worker = createWorker(decodeWorkerUrl);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+		this.worker = (await createDecodeWorker()) as Worker; // The actual encoding takes place in this worker
 
 		const onMessage = (event: MessageEvent<WorkerResponse>) => {
 			const data = event.data;
@@ -127,7 +130,8 @@ class Eac3Encoder extends CustomAudioEncoder {
 	}
 
 	async init() {
-		this.worker = createWorker(encodeWorkerUrl);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+		this.worker = (await createEncodeWorker()) as Worker; // The actual encoding takes place in this worker
 
 		const onMessage = (event: MessageEvent<WorkerResponse>) => {
 			const data = event.data;
